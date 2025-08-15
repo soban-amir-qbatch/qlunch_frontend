@@ -1,9 +1,11 @@
 // app/page.tsx (Next.js App Router)
 "use client";
-import Image from "next/image";
 import { useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [isTyping, setIsTyping] = useState(false);
   const [email, setEmail] = useState("");
 
@@ -12,6 +14,11 @@ export default function Home() {
     setEmail(value);
     setIsTyping(value.length > 0);
   };
+
+  const handleContinueClick = () => {
+    // Navigate to the next page or perform an action
+    router.push("/login"); // Example: redirect to login page
+  }
 
   return (
     <main className="flex flex-col h-screen bg-white">
@@ -48,6 +55,7 @@ export default function Home() {
           className={`bg-black text-white py-4 px-6 transition-all duration-500 ease-in-out ${
             isTyping ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
           }`}
+          onClick={handleContinueClick}
         >
           Continue
         </button>
