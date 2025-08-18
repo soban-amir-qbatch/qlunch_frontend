@@ -16,14 +16,52 @@ async function verifyJWT(token: string) {
   }
 }
 
+// helper: try refresh
+async function refreshAccessToken(refreshToken: string, req: NextRequest) {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/token/refresh/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    console.log("Refresh response:", response.status, response.statusText);
+
+    if (response.ok) {
+      const data = await response.json();
+
+      const res = NextResponse.next();
+      res.cookies.set("access", data.access, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+      return res;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const accessToken = req.cookies.get("access")?.value;
   const refreshToken = req.cookies.get("refresh")?.value;
 
   // If visiting login/signup and already logged in → redirect away
-  if (AUTH_PAGES.includes(pathname) && accessToken) {
-    const valid = await verifyJWT(accessToken);
+  if (AUTH_PAGES.includes(pathname)) {
+
+     if (!accessToken) {
+      console.log("No access token found");
+      if (refreshToken) {
+        const refreshed = await refreshAccessToken(refreshToken, req);
+        if (refreshed) return NextResponse.redirect(new URL("/home", req.url));
+      }
+    }
+
+    const valid = await verifyJWT(accessToken!);
     if (valid) {
       return NextResponse.redirect(new URL("/home", req.url));
     }
@@ -31,43 +69,29 @@ export async function middleware(req: NextRequest) {
 
   // If accessing protected pages
   if (PROTECTED_PAGES.some((p) => pathname.startsWith(p))) {
+    // Case 1: no access token
     if (!accessToken) {
+      console.log("No access token found");
+      if (refreshToken) {
+        const refreshed = await refreshAccessToken(refreshToken, req);
+        if (refreshed) return refreshed;
+      }
       return NextResponse.redirect(new URL("/", req.url));
     }
 
+    // Case 2: access token exists → validate
     const valid = await verifyJWT(accessToken);
     if (valid) {
       return NextResponse.next();
     }
 
-    // If token expired, try refreshing
+    // Case 3: access token invalid/expired → try refresh
     if (refreshToken) {
-      try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token/refresh/`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ refresh: refreshToken }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-
-          // set new access token in cookie
-          const res = NextResponse.next();
-          res.cookies.set("access", data.access, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/",
-          });
-          return res;
-        }
-      } catch {
-        // ignore
-      }
+      const refreshed = await refreshAccessToken(refreshToken, req);
+      if (refreshed) return refreshed;
     }
 
-    // No refresh or failed → back to login
+    // Still invalid
     return NextResponse.redirect(new URL("/", req.url));
   }
 

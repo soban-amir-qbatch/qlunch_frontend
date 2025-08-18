@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { use } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // Define the form schema
 const formSchema = z.object({
@@ -31,6 +31,7 @@ export default function Login({ searchParams }: { searchParams: { email?: string
   });
 
   const router = useRouter();
+
   const param = use(searchParams);
   const email = param.email || "";
 
