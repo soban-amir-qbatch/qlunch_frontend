@@ -1,4 +1,4 @@
-// app/page.tsx (Next.js App Router)
+// app/page.tsx
 "use client";
 import { useState } from "react";
 import Image from "next/image";
@@ -6,38 +6,31 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-  const [isTyping, setIsTyping] = useState(false);
   const [email, setEmail] = useState("");
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    setIsTyping(value.length > 0);
+    setEmail(e.target.value);
   };
 
   const handleContinueClick = () => {
-    // Navigate to the next page or perform an action
-    router.push("/login"); // Example: redirect to login page
-  }
+    router.push("/login");
+  };
 
   return (
-    <main className="flex flex-col h-screen bg-white">
+    <main className="flex flex-col h-screen bg-white overflow-y-auto">
       {/* Image section */}
-      <div className={`relative w-full transition-all duration-500 ease-in-out ${isTyping ? 'h-0 opacity-0' : 'h-3/5 opacity-100'}`}>
+      <div className="relative w-full h-1/2">
         <Image
           src="/landing.png"
           alt="Uber Eats Food"
           fill
-          className="object-cover"
+          className="object-cover object-top"
         />
       </div>
 
       {/* Content */}
-      <div className={`flex flex-col p-6 gap-4 transition-all duration-500 ease-in-out ${isTyping ? 'mt-16' : ''}`}>
-        {/* Heading */}
-        <p className="text-2xl">
-          {isTyping ? "Enter your email" : "Use your Qbatch email to get started"}
-        </p>
+      <div className="flex flex-col p-6 gap-4">
+        <p className="text-2xl">Use your Qbatch email to get started</p>
 
         {/* Email Input */}
         <div className="flex border border-gray-200 bg-gray-100 overflow-hidden">
@@ -52,14 +45,11 @@ export default function Home() {
 
         {/* Continue Button */}
         <button
-          className={`bg-black text-white py-4 px-6 transition-all duration-500 ease-in-out ${
-            isTyping ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
-          }`}
+          className="bg-black text-white py-4 px-6"
           onClick={handleContinueClick}
         >
           Continue
         </button>
-
       </div>
     </main>
   );

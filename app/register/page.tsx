@@ -154,7 +154,7 @@ export default function Register() {
         </div>
 
         {/* Navigation Buttons */}
-        <div className="flex justify-between mt-auto">
+        <div className="flex justify-between mt-auto pb-16">
           <button
             type="button"
             className="bg-gray-200 text-black py-4 px-4 rounded-full"

@@ -61,7 +61,7 @@ export default function Login() {
           </button>
         </form>
 
-        <div className='flex justify-between'>
+        <div className='flex justify-between pb-16'>
           <button 
             type="button"
             className="bg-gray-200 text-black py-4 px-4 rounded-4xl"
