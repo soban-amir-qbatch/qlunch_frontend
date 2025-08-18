@@ -66,7 +66,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1" onClick={() => setOpen(true)}>
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -85,7 +85,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -104,7 +104,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -123,7 +123,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -148,7 +148,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -167,7 +167,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -186,7 +186,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -205,7 +205,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -230,7 +230,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -249,7 +249,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -268,7 +268,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
@@ -287,7 +287,7 @@ export default function Restaurant(
           <div className="flex flex-col gap-1">
 
             <p className="font-semibold">Malai Boti</p>
-            <p className="text-xs font-semibold text-gray-600">Rs. 340/-</p>
+            <p className="text-xs text-blue-600 font-semibold">Rs. 340/-</p>
             <p className="text-xs text-gray-600">Tender chicken pieces marinated in creamy spices.</p>
           
           </div>
