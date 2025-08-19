@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Users, 
   Store, 
+  LayoutGrid,
   ShoppingBag, 
   DollarSign, 
   TrendingUp, 
@@ -24,12 +25,13 @@ import {
 import DashboardStats from '@/components/DashboardStats';
 import EmployeeManagement from '@/components/EmployeeManagement';
 import RestaurantManagement from '@/components/RestaurantManagement';
+import CategoriesManagement from '@/components/CategoriesManagement';
 import OrderManagement from '@/components/OrderManagement';
 import UserManagement from '@/components/UserManagement';
 import ItemManagement from '@/components/ItemManagement';
 import Analytics from '@/components/Analytics';
 
-type TabType = 'dashboard' | 'employees' | 'restaurants' | 'orders' | 'users' | 'items' | 'analytics';
+type TabType = 'dashboard' | 'employees' | 'restaurants' | 'categories' |'orders' | 'users' | 'items' | 'analytics';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -40,6 +42,7 @@ export default function AdminDashboard() {
     { id: 'dashboard', label: 'Dashboard', icon: TrendingUp },
     { id: 'employees', label: 'Employees', icon: Users },
     { id: 'restaurants', label: 'Restaurants', icon: Store },
+    { id: 'categories', label: 'Categories', icon: LayoutGrid },
     { id: 'orders', label: 'Orders', icon: ShoppingBag },
     { id: 'users', label: 'Users', icon: UserPlus },
     { id: 'items', label: 'Items', icon: Package },
@@ -54,6 +57,8 @@ export default function AdminDashboard() {
         return <EmployeeManagement />;
       case 'restaurants':
         return <RestaurantManagement />;
+      case 'categories':
+        return <CategoriesManagement />;
       case 'orders':
         return <OrderManagement />;
       case 'users':

@@ -1309,6 +1309,9 @@ export default function RestaurantManagement() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Add preview states for logo and background
+  const [selectedLogo, setSelectedLogo] = useState<string | null>(null);
+  const [selectedBackground, setSelectedBackground] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -1850,13 +1853,16 @@ export default function RestaurantManagement() {
             <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 shrink-0">
               <h3 className="text-xl font-bold text-gray-900">Add New Restaurant</h3>
               <button
-                onClick={() => setShowAddModal(false)}
+                onClick={() => {
+                  setShowAddModal(false);
+                  setSelectedLogo(null);
+                  setSelectedBackground(null);
+                }}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5 text-gray-500" />
               </button>
             </div>
-            
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto px-6 py-2">
               <div className="space-y-6 pb-6">
@@ -1872,7 +1878,6 @@ export default function RestaurantManagement() {
                     className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent placeholder:text-gray-400 transition-all"
                   />
                 </div>
-
                 {/* Address */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-800">Address</label>
@@ -1882,7 +1887,6 @@ export default function RestaurantManagement() {
                     className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent placeholder:text-gray-400 resize-none transition-all"
                   />
                 </div>
-
                 {/* Description */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-800">Description</label>
@@ -1892,7 +1896,6 @@ export default function RestaurantManagement() {
                     className="w-full px-4 py-3 text-base border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent placeholder:text-gray-400 resize-none transition-all"
                   />
                 </div>
-
                 {/* Restaurant Logo */}
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-gray-800">Restaurant Logo</label>
@@ -1902,94 +1905,139 @@ export default function RestaurantManagement() {
                       accept="image/*"
                       className="hidden"
                       id="logo-upload"
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = event => {
+                            setSelectedLogo(event.target?.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
                     />
-                    <label 
+                    <label
                       htmlFor="logo-upload"
                       className="cursor-pointer flex flex-col items-center gap-2"
                     >
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Plus className="w-5 h-5 text-gray-400" />
-                      </div>
+                      {selectedLogo ? (
+                        <div className="relative">
+                          <img
+                            src={selectedLogo}
+                            alt="Selected Logo"
+                            className="w-20 h-20 rounded-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-40 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                            <Plus className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                          <Plus className="w-5 h-5 text-gray-400" />
+                        </div>
+                      )}
                       <div>
-                        <p className="text-sm font-medium text-gray-700">Upload Logo</p>
+                        <p className="text-sm font-medium text-gray-700">{selectedLogo ? 'Change Logo' : 'Upload Logo'}</p>
                         <p className="text-xs text-gray-500">JPG, PNG up to 5MB</p>
                       </div>
                     </label>
                   </div>
                 </div>
-
-
                 {/* Background Image */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-800">Background Image</label>                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-gray-300 transition-colors">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        id="background-upload"
-                      />
-                      <label 
-                        htmlFor="background-upload"
-                        className="cursor-pointer flex flex-col items-center gap-2"
-                      >
+                  <label className="block text-sm font-semibold text-gray-800">Background Image</label>
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-gray-300 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      id="background-upload"
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = event => {
+                            setSelectedBackground(event.target?.result as string);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="background-upload"
+                      className="cursor-pointer flex flex-col items-center gap-2"
+                    >
+                      {selectedBackground ? (
+                        <div className="relative w-full aspect-video rounded-lg overflow-hidden">
+                          <img
+                            src={selectedBackground}
+                            alt="Selected Background"
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                            <Plus className="w-6 h-6 text-white" />
+                          </div>
+                        </div>
+                      ) : (
                         <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
                           <Plus className="w-5 h-5 text-gray-400" />
                         </div>
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">Upload Background</p>
-                          <p className="text-xs text-gray-500">JPG, PNG up to 10MB</p>
-                        </div>
-                      </label>
-                    </div>
+                      )}
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">{selectedBackground ? 'Change Background' : 'Upload Background'}</p>
+                        <p className="text-xs text-gray-500">JPG, PNG up to 10MB</p>
+                      </div>
+                    </label>
                   </div>
-
-                  {/* Status */}
-                  <div className="space-y-2">
-                    <label className="block text-sm font-semibold text-gray-800">Status</label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="status"
-                          value="open"
-                          defaultChecked
-                          className="w-4 h-4 text-black focus:ring-2 focus:ring-black"
-                        />
-                        <span className="text-sm font-medium text-gray-700">Open</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="status"
-                          value="closed"
-                          className="w-4 h-4 text-black focus:ring-2 focus:ring-black"
-                        />
-                        <span className="text-sm font-medium text-gray-700">Closed</span>
-                      </label>
-                    </div>
+                </div>
+                {/* Status */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-800">Status</label>
+                  <div className="flex gap-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="open"
+                        defaultChecked
+                        className="w-4 h-4 text-black focus:ring-2 focus:ring-black"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Open</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="status"
+                        value="closed"
+                        className="w-4 h-4 text-black focus:ring-2 focus:ring-black"
+                      />
+                      <span className="text-sm font-medium text-gray-700">Closed</span>
+                    </label>
                   </div>
                 </div>
               </div>
-
-              {/* Fixed Footer */}
-              <div className="p-6 pt-4 border-t border-gray-100 shrink-0">
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <button
-                    onClick={() => setShowAddModal(false)}
-                    className="w-full sm:flex-1 px-6 py-3 text-base font-medium border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button className="w-full sm:flex-1 px-6 py-3 text-base font-medium bg-black text-white rounded-xl hover:bg-gray-800 transition-colors">
-                    Add Restaurant
-                  </button>
+            </div>
+            {/* Fixed Footer */}
+            <div className="p-6 pt-4 border-t border-gray-100 shrink-0">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <button
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setSelectedLogo(null);
+                    setSelectedBackground(null);
+                  }}
+                  className="w-full sm:flex-1 px-6 py-3 text-base font-medium border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button className="w-full sm:flex-1 px-6 py-3 text-base font-medium bg-black text-white rounded-xl hover:bg-gray-800 transition-colors">
+                  Add Restaurant
+                </button>
                 </div>
+              </div>
             </div>
-            </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-               
+          </div>
+        )}
+      </div>
+    );
+  }
