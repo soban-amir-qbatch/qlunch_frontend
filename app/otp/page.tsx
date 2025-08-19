@@ -51,7 +51,7 @@ export default function Otp() {
   };
 
   return (
-    <main className="flex flex-col h-screen bg-white p-6">
+    <main className="flex flex-col h-full bg-white p-6">
       <div className="flex flex-col h-full justify-between gap-4 mt-16">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           {/* TODO: make the email dynamic */}

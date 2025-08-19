@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
 const AUTH_PAGES = ["/", "/login", "/signup"];
-const PROTECTED_PAGES = ["/home", "/profile", "/restaurant"];
+const PROTECTED_PAGES = ["/home", "/profile", "/restaurant", "/search", "/account"];
 
 // helper: verify JWT using jose
 async function verifyJWT(token: string) {
@@ -16,7 +16,7 @@ async function verifyJWT(token: string) {
   }
 }
 
-// helper: try refresh
+// helper: try refreshÍ
 async function refreshAccessToken(refreshToken: string, req: NextRequest) {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/token/refresh/`, {
@@ -99,5 +99,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/home/:path*", "/profile/:path*", "/restaurant/:path*", "/login", "/signup"],
+  matcher: ["/", "/home/:path*", "/profile/:path*", "/restaurant/:path*", "/search/:path*", "/account/:path*", "/login", "/signup"],
 };

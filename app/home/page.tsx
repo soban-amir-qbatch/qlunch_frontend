@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CategoryBox from "@/components/CategoryBox";
 import RestaurantCard, { RestaurantCardSkeleton } from "@/components/RestaurantCard";
@@ -14,14 +14,19 @@ interface Restaurant {
 export default function HomePage() {
   const [showCategories, setShowCategories] = useState(false);
 
-  const [Restaurants, setRestaurants] = useState<Restaurant[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [restaurants, setRestaurants] = useState<Restaurant[] | null>(null);
+
   useEffect(() => {
-    // Fetch restaurants data from API or static file
     const fetchRestaurants = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/restaurants/`); // Adjust the endpoint as needed
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/restaurants/`, {
+          cache: 'force-cache', // This is equivalent to getStaticProps in Next.js pages
+          next: {
+            revalidate: 60 // Revalidate every 60 seconds
+          }
+        });
         const data = await response.json();
         setRestaurants(data.results);
       } catch (error) {
@@ -32,16 +37,14 @@ export default function HomePage() {
     };
 
     fetchRestaurants();
-
-
   }, [])
 
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative h-full">
       {/* Background (always rendered, blurred if modal open) */}
-      <div className={`transition-all duration-300 ${showCategories ? "blur-sm" : ""}`}>
-        <div className="flex flex-col h-screen p-6 bg-white">
+      <div className={`h-full transition-all duration-300 ${showCategories ? "blur-sm" : ""}`}>
+        <div className="flex flex-col h-full p-6 bg-white">
           <h1 className="text-xl mb-4 text-center font-bold">Now - Qbatch</h1>
           {/* Categories Section */}
           <div className="space-y-1 mb-6">
@@ -71,7 +74,7 @@ export default function HomePage() {
             </div>
           </div>
           {/* Restaurants Section */}
-          <div className="flex-1 overflow-auto min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0">
             <div className="flex flex-col gap-2">
               {isLoading ? (
                 // Show multiple skeletons while loading
@@ -79,7 +82,7 @@ export default function HomePage() {
                   <RestaurantCardSkeleton key={index} />
                 ))
               ) : (
-                Restaurants.map((restaurant) => (
+                restaurants?.map((restaurant: Restaurant) => (
                   <RestaurantCard
                     key={restaurant.id}
                     id={restaurant.id}

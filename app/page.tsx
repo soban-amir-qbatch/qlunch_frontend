@@ -17,7 +17,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col h-screen bg-white overflow-y-auto">
+    <main className="flex flex-col h-full bg-white overflow-y-auto">
       {/* Image section */}
       <div className="relative w-full h-1/2">
         <Image

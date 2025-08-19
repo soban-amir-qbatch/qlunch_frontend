@@ -4,7 +4,7 @@ export async function POST(req: Request) {
   const body = await req.json();
 
   // call Django token endpoint
-  const res = await fetch("http://localhost:8000/api/auth/token/", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/token/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

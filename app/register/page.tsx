@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState, useRef } from "react";
 import Image from "next/image";
+import { ImageUpload } from "@/components/ImageUpload";
 
 const MAX_FILE_SIZE = 5000000; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -28,12 +29,8 @@ const registerSchema = z.object({
 type RegisterForm = z.infer<typeof registerSchema>;
 
 export default function Register() {
-  const [profilePic, setProfilePic] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const triggerFileInput = () => {
-    fileInputRef.current?.click();
-  };
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { 
     register, 
@@ -45,47 +42,75 @@ export default function Register() {
     mode: "onChange"
   });
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        alert("File size must be less than 5MB");
-        return;
-      }
-      if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-        alert("File must be an image (JPEG, PNG, or WebP)");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePic(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleFileSelect = (file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      alert("File size must be less than 5MB");
+      return;
     }
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      alert("File must be an image (JPEG, PNG, or WebP)");
+      return;
+    }
+    setSelectedFile(file);
   };
 
-  const onSubmit = (data: RegisterForm) => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...data}),
-    }).then(res => {
-      if (res.ok) {
-        console.log("Registration successful");
-        // Redirect to login or home page
-        window.location.href = "/login?email=" + encodeURIComponent(data.email);
-      }
+  const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to upload image');
     }
-    )
+
+    const data = await response.json();
+    return data.url;
   };
+
+  const onSubmit = async (data: RegisterForm) => {
+    try {
+      setIsSubmitting(true);
+      let profileImageUrl = null;
+
+      if (selectedFile) {
+        profileImageUrl = await uploadImage(selectedFile);
+      }
+
+      const response = await fetch("/api/register/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          ...data,
+          profile_image: profileImageUrl 
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Registration failed');
+      }
+
+      // Redirect to login
+      window.location.href = "/login?email=" + encodeURIComponent(data.email);
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Registration failed. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
 
   return (
-    <main className="flex flex-col h-screen bg-white p-6">
+    <main className="flex flex-col h-full bg-white p-6">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 h-full">
         <h1 className="text-2xl font-semibold">Create your account</h1>
 
         {/* Profile Picture Upload */}
-        <div className="flex flex-col items-center gap-4">
+        {/* <div className="flex flex-col items-center gap-4">
           <div 
             className="relative w-32 h-32 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity"
             onClick={triggerFileInput}
@@ -110,7 +135,12 @@ export default function Register() {
           >
             {profilePic ? 'Change photo' : 'Upload photo'}
           </label>
-        </div>
+        </div> */}
+
+        <ImageUpload 
+          onFileSelect={handleFileSelect}
+          className="w-32 mx-auto"
+        />
 
         {/* Name Input */}
         <div className="flex flex-col gap-1">
@@ -177,7 +207,7 @@ export default function Register() {
           <button
             type="submit"
             className={`flex gap-2 bg-black text-white py-4 px-6 rounded-full disabled:opacity-50 transition-all duration-500 ease-in-out ${isValid ? 'opacity-100' : 'opacity-50'}`}
-            disabled={!isValid}
+            disabled={!isValid || isSubmitting}
           >
             Continue
             <ArrowRight className="w-6 h-6" />

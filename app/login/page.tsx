@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { use } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 // Define the form schema
 const formSchema = z.object({
@@ -62,12 +63,11 @@ export default function Login({ searchParams }: { searchParams: { email?: string
   };
 
   return (
-    <main className="flex flex-col h-screen bg-white">
+    <main className="flex flex-col h-full bg-white">
       <div className="flex flex-col h-full justify-between p-6 gap-4 mt-16">
         <form onSubmit={handleSubmit(onSubmit)} className="h-full flex flex-col gap-2">
           <p className="text-2xl">
-            {/* TODO: Add dynamic name */}
-            Welcome back, Soban
+            Welcome to QLunch
           </p>
 
           <div className="flex flex-col gap-1">
@@ -84,9 +84,13 @@ export default function Login({ searchParams }: { searchParams: { email?: string
             )}
           </div>
 
-          <button type="button" className="bg-gray-200 text-black text-xs py-2 px-2 w-fit rounded-4xl mt-4">
+          <Link href={"/forgot-password"} className="bg-gray-200 text-black text-xs py-2 px-2 w-fit rounded-4xl mt-4">
             I've forgotten my password
-          </button>
+          </Link>
+
+          <Link href={"/register"} className="bg-gray-200 text-black text-xs py-2 px-2 w-fit rounded-4xl mt-4">
+            Create an account
+          </Link>
 
           <div className=' mt-auto flex justify-between pb-16'>
             <button

@@ -2,9 +2,14 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import "./globals.css";
+import { BottomNavbar } from "@/components/BottomNavbar";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
+  const pathname = usePathname();
+
+  const isExcludedPath = pathname !== "/" && pathname !== "/login" && pathname !== "/register" && pathname !== "/otp" && !pathname?.startsWith("/admin") && !pathname?.startsWith("/restaurant");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -31,7 +36,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
 
         {/* Page content */}
-        {children}
+        <div className={isExcludedPath ? "h-[calc(100dvh-64px)]" : "h-[100dvh]"}>
+          {children}
+        </div>
+      
+        {/* Bottom Navigation */}
+        {!loading && isExcludedPath && (
+          <BottomNavbar />
+        )}
       </body>
     </html>
   );
