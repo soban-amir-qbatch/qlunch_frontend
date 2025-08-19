@@ -2,19 +2,20 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CategoryBox from "@/components/CategoryBox";
-import RestaurantCard from "@/components/RestaurantCard";
+import RestaurantCard, { RestaurantCardSkeleton } from "@/components/RestaurantCard";
 import CategoriesScreen from "@/components/CategoriesScreen";
 
-export default function HomePage() {
-  const [showCategories, setShowCategories] = useState(false);
-  
-  interface Restaurant {
+interface Restaurant {
     id: number;
     name: string;
     image_url: string;
   }
-  
+
+export default function HomePage() {
+  const [showCategories, setShowCategories] = useState(false);
+
   const [Restaurants, setRestaurants] = useState<Restaurant[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Fetch restaurants data from API or static file
@@ -25,22 +26,17 @@ export default function HomePage() {
         setRestaurants(data.results);
       } catch (error) {
         console.error("Error fetching restaurants:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchRestaurants();
-  
-    
+
+
   }, [])
 
-  if(Restaurants === null) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-500">Loading restaurants...</p> 
-      </div>
-    );
-  }
-  
+
   return (
     <div className="relative min-h-screen">
       {/* Background (always rendered, blurred if modal open) */}
@@ -77,14 +73,22 @@ export default function HomePage() {
           {/* Restaurants Section */}
           <div className="flex-1 overflow-auto min-h-0">
             <div className="flex flex-col gap-2">
-              {Restaurants.map((restaurant) => (
-                <RestaurantCard
-                  key={restaurant.id}
-                  imageUrl={restaurant.image_url}
-                  title={restaurant.name}
-                  rating={4.8}
-                />))
-              }
+              {isLoading ? (
+                // Show multiple skeletons while loading
+                Array.from({ length: 3 }).map((_, index) => (
+                  <RestaurantCardSkeleton key={index} />
+                ))
+              ) : (
+                Restaurants.map((restaurant) => (
+                  <RestaurantCard
+                    key={restaurant.id}
+                    id={restaurant.id}
+                    imageUrl={restaurant.image_url}
+                    title={restaurant.name}
+                    rating={4.8}
+                  />
+                ))
+              )}
             </div>
           </div>
         </div>
