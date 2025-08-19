@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useState, useRef } from "react";
 import Image from "next/image";
 import { ImageUpload } from "@/components/ImageUpload";
+import { profile } from "console";
 
 const MAX_FILE_SIZE = 5000000; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -20,7 +21,9 @@ const registerSchema = z.object({
     .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
     .regex(/[a-z]/, "Password must contain at least one lowercase letter")
     .regex(/[0-9]/, "Password must contain at least one number"),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
+  profile_image_url: z.url().optional()
+
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -71,21 +74,28 @@ export default function Register() {
     return data.url;
   };
 
-  const onSubmit = async (data: RegisterForm) => {
+  const onSubmit = async (formData: RegisterForm) => {
     try {
       setIsSubmitting(true);
-      let profileImageUrl = null;
+      
+      // Upload image if selected
+      const profile_image_url = selectedFile ? await uploadImage(selectedFile) : null;
 
-      if (selectedFile) {
-        profileImageUrl = await uploadImage(selectedFile);
-      }
+      // Remove confirmPassword from the data to be sent
+      const { confirmPassword, ...registerData } = formData;
 
-      const response = await fetch("/api/register/", {
+      console.log('Sending registration data:', {
+        ...registerData,
+        profile_image_url
+      });
+
+      // Make the registration API call
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          ...data,
-          profile_image: profileImageUrl 
+          ...registerData,
+          profile_image_url 
         }),
       });
 
@@ -101,6 +111,27 @@ export default function Register() {
     } finally {
       setIsSubmitting(false);
     }
+      //     body: JSON.stringify({ 
+      //       ...data,
+      //       profile_image_url: null
+      //     }),
+      //   }).then(response => {
+      //     if (!response.ok) {
+      //       throw new Error('Registration failed');
+      //     }
+      //   });
+      // }
+
+     
+
+    //   // Redirect to login
+    //   //window.location.href = "/login?email=" + encodeURIComponent(data.email);
+    // } catch (error) {
+    //   console.error('Registration error:', error);
+    //   alert('Registration failed. Please try again.');
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
   };
   
 

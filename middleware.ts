@@ -2,19 +2,20 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-const AUTH_PAGES = ["/", "/login", "/signup"];
+const AUTH_PAGES = ["/", "/login", "/register"];
 const PROTECTED_PAGES = ["/home", "/profile", "/restaurant", "/search", "/account"];
 
-// helper: verify JWT using jose
-async function verifyJWT(token: string) {
-  try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-    const { payload } = await jwtVerify(token, secret);
-    return payload; // decoded payload if valid
-  } catch (err) {
-    return null; // invalid or expired
-  }
-}
+// // helper: verify JWT using jose
+// async function verifyJWT(token: string) {
+//   try {
+//     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+//     const { payload } = await jwtVerify(token, secret);
+//     return payload; // decoded payload if valid
+//   } catch (err) {
+//     console.log("JWT verification error:", err);
+//     return null; // invalid or expired
+//   }
+// }
 
 // helper: try refreshÍ
 async function refreshAccessToken(refreshToken: string, req: NextRequest) {
@@ -50,9 +51,10 @@ export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("access")?.value;
   const refreshToken = req.cookies.get("refresh")?.value;
 
-  // If visiting login/signup and already logged in → redirect away
+  // If visiting login/register and already logged in → redirect away
+  console.log(pathname, AUTH_PAGES.includes(pathname), accessToken, refreshToken);
   if (AUTH_PAGES.includes(pathname)) {
-
+    
      if (!accessToken) {
       console.log("No access token found");
       if (refreshToken) {
@@ -61,10 +63,11 @@ export async function middleware(req: NextRequest) {
       }
     }
 
-    const valid = await verifyJWT(accessToken!);
-    if (valid) {
-      return NextResponse.redirect(new URL("/home", req.url));
-    }
+    // const valid = await verifyJWT(accessToken!);
+
+    // if (valid) {
+    return NextResponse.redirect(new URL("/home", req.url));
+    // }
   }
 
   // If accessing protected pages
@@ -80,24 +83,24 @@ export async function middleware(req: NextRequest) {
     }
 
     // Case 2: access token exists → validate
-    const valid = await verifyJWT(accessToken);
-    if (valid) {
-      return NextResponse.next();
-    }
+    // const valid = await verifyJWT(accessToken);
+    // if (valid) {
+    return NextResponse.next();
+    // }
 
-    // Case 3: access token invalid/expired → try refresh
-    if (refreshToken) {
-      const refreshed = await refreshAccessToken(refreshToken, req);
-      if (refreshed) return refreshed;
-    }
+    // // Case 3: access token invalid/expired → try refresh
+    // if (refreshToken) {
+    //   const refreshed = await refreshAccessToken(refreshToken, req);
+    //   if (refreshed) return refreshed;
+    // }
 
     // Still invalid
-    return NextResponse.redirect(new URL("/", req.url));
+    // return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/home/:path*", "/profile/:path*", "/restaurant/:path*", "/search/:path*", "/account/:path*", "/login", "/signup"],
+  matcher: ["/", "/home/:path*", "/profile/:path*", "/restaurant/:path*", "/search/:path*", "/account/:path*", "/login", "/register"],
 };
