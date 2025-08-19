@@ -3,6 +3,7 @@ import { use, useState } from "react";
 import Image from "next/image";
 import MenuItemDrawer from "@/components/MenuItemDrawer";
 
+
 export default function Restaurant(
   {
     params,
