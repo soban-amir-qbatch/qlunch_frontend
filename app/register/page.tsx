@@ -65,7 +65,18 @@ export default function Register() {
   };
 
   const onSubmit = (data: RegisterForm) => {
-    console.log("Form submitted:", { ...data, profilePic });
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...data}),
+    }).then(res => {
+      if (res.ok) {
+        console.log("Registration successful");
+        // Redirect to login or home page
+        window.location.href = "/login?email=" + encodeURIComponent(data.email);
+      }
+    }
+    )
   };
 
   return (

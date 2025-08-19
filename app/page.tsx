@@ -13,7 +13,7 @@ export default function Home() {
   };
 
   const handleContinueClick = () => {
-    router.push("/login");
+    router.push("/login?email=" + encodeURIComponent(email));
   };
 
   return (

@@ -1,19 +1,54 @@
 'use client'
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CategoryBox from "@/components/CategoryBox";
 import RestaurantCard from "@/components/RestaurantCard";
 import CategoriesScreen from "@/components/CategoriesScreen";
+
 export default function HomePage() {
   const [showCategories, setShowCategories] = useState(false);
+  
+  interface Restaurant {
+    id: number;
+    name: string;
+    image_url: string;
+  }
+  
+  const [Restaurants, setRestaurants] = useState<Restaurant[] | null>(null);
+
+  useEffect(() => {
+    // Fetch restaurants data from API or static file
+    const fetchRestaurants = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/restaurants/`); // Adjust the endpoint as needed
+        const data = await response.json();
+        setRestaurants(data.results);
+      } catch (error) {
+        console.error("Error fetching restaurants:", error);
+      }
+    };
+
+    fetchRestaurants();
+  
+    
+  }, [])
+
+  if(Restaurants === null) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Loading restaurants...</p> 
+      </div>
+    );
+  }
+  
   return (
     <div className="relative min-h-screen">
       {/* Background (always rendered, blurred if modal open) */}
       <div className={`transition-all duration-300 ${showCategories ? "blur-sm" : ""}`}>
-        <div className="p-6 space-y-6 bg-white min-h-screen">
-          <h1 className="text-xl mb-4 text-center font-bold">Now - London Hall</h1>
+        <div className="flex flex-col h-screen p-6 bg-white">
+          <h1 className="text-xl mb-4 text-center font-bold">Now - Qbatch</h1>
           {/* Categories Section */}
-          <div className="space-y-1">
+          <div className="space-y-1 mb-6">
             {/* First row → 2 items */}
             <div className="grid grid-cols-2 gap-1">
               <div onClick={() => setShowCategories(true)} className="cursor-pointer h-24">
@@ -40,10 +75,17 @@ export default function HomePage() {
             </div>
           </div>
           {/* Restaurants Section */}
-          <div className="flex flex-col gap-2">
-            <RestaurantCard imageUrl="/assets/images/image.png" title="Adenine Kitchen" rating={4.4} />
-            <RestaurantCard imageUrl="/assets/images/image.png" title="Cardinal Chips" rating={4.3} />
-            <RestaurantCard imageUrl="/assets/images/image.png" title="Cardinal Chips" rating={4.3} />
+          <div className="flex-1 overflow-auto min-h-0">
+            <div className="flex flex-col gap-2">
+              {Restaurants.map((restaurant) => (
+                <RestaurantCard
+                  key={restaurant.id}
+                  imageUrl={restaurant.image_url}
+                  title={restaurant.name}
+                  rating={4.8}
+                />))
+              }
+            </div>
           </div>
         </div>
       </div>
@@ -83,7 +125,7 @@ export default function HomePage() {
               className="bg-white w-full max-w-4xl shadow-lg p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <CategoriesScreen />
+              <CategoriesScreen goBack={() => setShowCategories(false)} />
             </div>
           </motion.div>
         )}
